@@ -23,12 +23,12 @@ export class CreateOrderUseCase {
     }
 
     const productIds = dto.items.map((item) => item.productId);
-    const products = await this.productRepository.findByIds(productIds);
+    const products = await this.productRepository.findByIds(productIds) as ProductData[];
 
-    const productMap = new Map(products.map((p) => [p.id, p]));
+    const productMap = new Map<string, ProductData>(products.map((p) => [p.id, p]));
 
     let totalInCents = 0;
-    const orderItemsData = [];
+    const orderItemsData: { productId: string; quantity: number; priceInCents: number }[] = [];
 
     for (const item of dto.items) {
       const product = productMap.get(item.productId);
