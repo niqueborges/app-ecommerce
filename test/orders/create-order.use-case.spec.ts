@@ -3,7 +3,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { OrderRepositoryPort } from '../../src/application/ports/order.repository.port';
 import { ProductRepositoryPort } from '../../src/application/ports/product.repository.port';
-import { PrismaService } from '../../src/infrastructure/database/prisma.service';
+import { PrismaService } from '../../src/database/prisma.service';
 
 describe('CreateOrderUseCase', () => {
   let useCase: CreateOrderUseCase;
@@ -17,7 +17,7 @@ describe('CreateOrderUseCase', () => {
     prismaServiceMock = mock<PrismaService>();
 
     // Mock do Prisma transaction (basta retornar a execucao da callback de forma sincronizada ou assincronizada simples)
-    prismaServiceMock.$transaction.mockImplementation(async (callback) => {
+    prismaServiceMock.$transaction.mockImplementation(async (callback: any) => {
       return callback(prismaServiceMock as any);
     });
 

@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, Logger, Inject } from '@nestjs/common';
 import { PaymentGatewayPort } from '../ports/payment-gateway.port';
 import { PaymentRepositoryPort } from '../ports/payment.repository.port';
-import { PrismaService } from '../../infrastructure/database/prisma.service';
+import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
 export class HandlePaymentWebhookUseCase {

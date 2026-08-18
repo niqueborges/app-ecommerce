@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentRepositoryPort } from '../../../application/ports/payment.repository.port';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../../../database/prisma.service';
 
 @Injectable()
 export class PrismaPaymentRepository implements PaymentRepositoryPort {

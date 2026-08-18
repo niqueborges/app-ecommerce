@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { OrderRepositoryPort } from '../../../application/ports/order.repository.port';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../../../database/prisma.service';
 
 @Injectable()
 export class PrismaOrderRepository implements OrderRepositoryPort {
