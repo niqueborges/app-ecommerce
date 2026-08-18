@@ -1,0 +1,60 @@
+services:
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://postgres:dev@db:5432/ecommerce
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      JWT_SECRET: dev-ecommerce-secret-key-super-secure-123456
+      JWT_REFRESH_SECRET: dev-ecommerce-refresh-secret-key-987654
+      NODE_ENV: development
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_mock}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_mock}
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: ecommerce
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - '8025:8025' # Web UI: http://localhost:8025
+      - '1025:1025' # SMTP Server
+
+volumes:
+  postgres_data:
+  redis_data:
