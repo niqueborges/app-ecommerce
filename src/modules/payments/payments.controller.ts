@@ -1,13 +1,17 @@
 import { Controller, Post, Param, Req, Headers, UseGuards, RawBodyRequest } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
-import { PaymentsService } from './payments.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { CreatePaymentIntentUseCase } from '../../application/use-cases/create-payment-intent.use-case';
+import { HandlePaymentWebhookUseCase } from '../../application/use-cases/handle-payment-webhook.use-case';
 
 @ApiTags('Payments')
 @Controller('payments')
 export class PaymentsController {
-  constructor(private readonly paymentsService: PaymentsService) {}
+  constructor(
+    private readonly createPaymentIntentUseCase: CreatePaymentIntentUseCase,
+    private readonly handlePaymentWebhookUseCase: HandlePaymentWebhookUseCase
+  ) {}
 
   @Post('create-intent/:orderId')
   @UseGuards(JwtAuthGuard)
@@ -15,7 +19,7 @@ export class PaymentsController {
   @ApiOperation({ summary: 'Criar Stripe PaymentIntent para um pedido' })
   @ApiResponse({ status: 201, description: 'Client secret do Stripe gerado' })
   createIntent(@Param('orderId') orderId: string) {
-    return this.paymentsService.createPaymentIntent(orderId);
+    return this.createPaymentIntentUseCase.execute(orderId);
   }
 
   @Post('webhook')
@@ -24,6 +28,6 @@ export class PaymentsController {
     @Headers('stripe-signature') signature: string,
     @Req() req: RawBodyRequest<Request>
   ) {
-    return this.paymentsService.handleWebhookEvent(signature, req.rawBody || Buffer.from(''));
+    return this.handlePaymentWebhookUseCase.execute(signature, req.rawBody || Buffer.from(''));
   }
 }
