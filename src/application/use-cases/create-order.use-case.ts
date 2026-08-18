@@ -4,6 +4,14 @@ import { ProductRepositoryPort } from '../ports/product.repository.port';
 import { CreateOrderDto } from '../../modules/orders/dto/create-order.dto';
 import { PrismaService } from '../../database/prisma.service';
 
+interface ProductData {
+  id: string;
+  active: boolean;
+  stock: number;
+  name: string;
+  priceInCents: number;
+}
+
 @Injectable()
 export class CreateOrderUseCase {
   constructor(

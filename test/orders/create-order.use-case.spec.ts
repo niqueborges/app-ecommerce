@@ -17,8 +17,10 @@ describe('CreateOrderUseCase', () => {
     prismaServiceMock = mock<PrismaService>();
 
     // Mock do Prisma transaction (basta retornar a execucao da callback de forma sincronizada ou assincronizada simples)
-    prismaServiceMock.$transaction.mockImplementation(async (callback: any) => {
-      return callback(prismaServiceMock as any);
+    prismaServiceMock.$transaction.mockImplementation(async (callback: unknown) => {
+      if (typeof callback === 'function') {
+        return callback(prismaServiceMock as unknown);
+      }
     });
 
     useCase = new CreateOrderUseCase(
